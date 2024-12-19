@@ -1,21 +1,24 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
+import {fetchImageFromModal} from "@/utils/ModalClient";
+import {uploadImageToS3} from "@/utils/S3Client";
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { text } = body;
+    try {
+        const body = await request.json();
+        const {prompt} = body;
 
-    // TODO: Call your Image Generation API here
-    // For now, we'll just echo back the text
+        const imageData = await fetchImageFromModal(prompt);
+        const imageUrl = await uploadImageToS3(imageData);
 
-    return NextResponse.json({
-      success: true,
-      message: `Received: ${text}`,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, error: "Failed to process request" },
-      { status: 500 }
-    );
-  }
+        return NextResponse.json(
+            {success: true, imageUrl},
+            {status: 200}
+        );
+    } catch (error) {
+        console.error("Error:", error);
+        return NextResponse.json(
+            {success: false, error: error.message || "Failed to process request"},
+            {status: 500}
+        );
+    }
 }

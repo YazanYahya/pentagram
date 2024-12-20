@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const MODAL_API_URL = process.env.MODAL_API_URL;
-const API_KEY = process.env.API_KEY;
+const MODAL_API_URL = process.env.MODAL_API_URL || "";
+const API_KEY = process.env.API_KEY || "";
 
 export async function fetchImageFromModal(prompt: string): Promise<Buffer> {
     try {
         const response = await axios.get(MODAL_API_URL, {
-            params: {prompt},
+            params: { prompt },
             headers: {
                 "api-key": API_KEY,
             },

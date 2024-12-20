@@ -1,12 +1,12 @@
-import {ListObjectsV2Command, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import {v4 as uuidv4} from "uuid";
+import { ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from "uuid";
 
-const S3_BUCKET = process.env.S3_BUCKET;
-const S3_REGION = process.env.S3_REGION;
-const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY;
-const S3_SECRET_KEY = process.env.S3_SECRET_KEY;
-const S3_ENDPOINT = process.env.S3_ENDPOINT;
-const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL;
+const S3_BUCKET = process.env.S3_BUCKET || "";
+const S3_REGION = process.env.S3_REGION || "";
+const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY || "";
+const S3_SECRET_KEY = process.env.S3_SECRET_KEY || "";
+const S3_ENDPOINT = process.env.S3_ENDPOINT || "";
+const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL || "";
 
 // Initialize S3 client for Cloudflare R2
 const s3Client = new S3Client({
@@ -46,9 +46,7 @@ export async function listImagesFromS3(): Promise<string[]> {
 
         const response = await s3Client.send(command);
 
-        const imageKeys = response.Contents?.map((item) => {
-            return `${R2_PUBLIC_URL}/${item.Key}`;
-        }) || [];
+        const imageKeys = response.Contents?.map((item) => `${R2_PUBLIC_URL}/${item.Key}`) || [];
 
         return imageKeys;
     } catch (error) {
